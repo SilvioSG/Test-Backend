@@ -21,6 +21,12 @@ class UserViewsTestCase(TestCase):
         self.assertEqual(len(response.data), 1)
         print(f"Passou no teste get_all_users {response.status_code}")
 
+    def test_get_user_by_name_not_found(self):
+        url = reverse('get_user_by_name', kwargs={'name': 'Not_Found'})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        print(f"Passou no teste get_user_by_name_not_found {response.status_code}")
+
     def test_get_user_by_name(self):
         url = reverse('get_user_by_name', kwargs={'name': self.user.name})
         response = self.client.get(url)
@@ -29,6 +35,7 @@ class UserViewsTestCase(TestCase):
         self.assertEqual(response.data['email'], self.user.email)
         self.assertEqual(response.data['password_hash'], self.user.password_hash)
         print(f"Passou no teste get_user_by_name {response.status_code}")
+
 
     def test_create_user(self):
         url = reverse('create_user')
@@ -44,6 +51,19 @@ class UserViewsTestCase(TestCase):
         self.assertEqual(new_user.email, new_user_data['email'])
         print(f"Passou no teste create_user {response.status_code}")
 
+
+    def test_create_user_equal_name(self):
+        url = reverse('create_user')
+        new_user_data = {
+            'name': 'Test_User',
+            'email': '',
+            'password_hash': ''
+        }
+        response = self.client.post(url, new_user_data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        print(f"Passou no teste create_user_equal_name {response.status_code}")
+
+
     def test_update_user(self):
         url = reverse('update_user')
         updated_user_data = {
@@ -56,6 +76,15 @@ class UserViewsTestCase(TestCase):
         self.assertEqual(self.user.name, updated_user_data['name'])
         self.assertEqual(self.user.email, updated_user_data['email'])
         print(f"Passou no teste update_user {response.status_code}")
+ 
+    def test_update_user_not_found(self):
+        url = reverse('update_user')
+        updated_user_data = {
+            'name': 'Not_Found',
+            'email': ''}
+        response = self.client.put(url, updated_user_data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        print(f"Passou no teste update_user_not_found {response.status_code}")
 
     def test_delete_user(self):
         url = reverse('delete_user', kwargs={'name': self.user.name})
@@ -63,3 +92,10 @@ class UserViewsTestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(User.objects.count(), 0)
         print(f"Passou no teste delete_user {response.status_code}")
+
+    def test_delete_user_not_found(self):
+        url = reverse('delete_user', kwargs={'name': 'Not_Found'})
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        print(f"Passou no teste delete_user_not_found {response.status_code}")
+    
