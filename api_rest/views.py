@@ -8,6 +8,7 @@ from .models import User
 from .serialize import UserSerializer
 
 import json
+from django.shortcuts import get_object_or_404
 
 
 # Create your views here.
@@ -25,15 +26,10 @@ def get_user(request):
 
 @api_view(["GET"])
 def get_user_by_name(request, name):
-    try:
-        user = User.objects.get(pk=name) # Query the user by name
-    except User.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-    
-    if request.method == "GET":
-        serialize = UserSerializer(user)
-        return Response(serialize.data)
-    
+    user = get_object_or_404(User, pk=name)
+    serialize = UserSerializer(user)
+    return Response(serialize.data)
+
 
 
 # Create a new user

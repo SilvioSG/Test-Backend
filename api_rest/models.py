@@ -17,4 +17,6 @@ class User(models.Model):
     def save(self, *args, **kwargs):
         if self.password_hash:
             self.password_hash = make_password(self.password_hash)
-        super(User, self).save(*args, **kwargs)    
+        super(User, self).save(*args, **kwargs)
+
+    
