@@ -17,7 +17,7 @@
 3. Execute as migrações:
     $ python manage.py migrate
 
-4. Inicie o servidor: <br/>
+4. Inicie o servidor: 
     $ python manage.py runserver
 ```
 
